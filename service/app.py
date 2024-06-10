@@ -1,6 +1,9 @@
 import requests
+import click
+import pathlib
 from os import environ
 from flask import Flask, request
+from merge_coverage_data import read_coverage_and_operators
 
 
 ADDOK_URL = environ.get("ADDOK_URL")
@@ -20,3 +23,13 @@ def search_handler():
     else:
         app.logger.error(r.content)
         return ("Got error from addok service", 500)
+
+
+@app.cli.command("read-coverage")
+@click.argument("operators", type=click.File("r"))
+@click.argument("coverage", type=click.File("r"))
+def read_operators_cmd(operators, coverage):
+    records = read_coverage_and_operators(operators, coverage)
+    print(list(records)[:10])
+
+app.cli.add_command(read_operators_cmd)

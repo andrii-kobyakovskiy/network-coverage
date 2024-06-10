@@ -4,6 +4,7 @@ services:
   api:
     build:
       context: .
+    restart: always
     environment:
       ADDOK_URL: https://api-adresse.data.gouv.fr
     stop_signal: SIGINT
@@ -11,6 +12,8 @@ services:
       - 5000:5000
     networks:
       - backnet
+    volumes:
+      - ./data-coverage/:/data/
 
 networks:
   backnet:
