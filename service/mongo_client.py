@@ -38,3 +38,22 @@ class MongoClient:
     
     def init_index(self):
         self._collection.create_index([("location", pymongo.GEO2D)])
+
+    def get_coverage(self, x, y):
+        coverage_records = self._collection.find({
+            "location": {
+                "$near": [x,y],
+                "$maxDistance": int(environ.get("SEARCH_DISTANCE", default="100")),
+            }
+        })
+        result = dict[str, dict]()
+        for record in coverage_records:
+            if record["operator"] in result:
+                continue  # use only the nearest record
+            result[record["operator"]] = {
+                "2G": record["has_2g"],
+                "3G": record["has_3g"],
+                "4G": record["has_4g"],
+            }
+        return result
+

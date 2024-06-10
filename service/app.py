@@ -15,11 +15,17 @@ app = Flask(__name__)
 @app.route("/search")
 def search_handler():
     if "q" not in request.args:
-        return ("Argument `q` is required", 404)
+        return ("Argument `q` is required", 400)
     query = request.args["q"]
     r = requests.get(ADDOK_URL + "/search/", params={"q": query})
     if r.ok:
-        return r.json()
+        points = r.json()["features"]
+        if not points:
+            return ("Cannot find provided address", 404)
+        x, y = points[0]["geometry"]["coordinates"]
+        mongo = MongoClient.get_instance()
+        coverage = mongo.get_coverage(x, y)
+        return coverage if coverage else ("Cannot find coverage for provided address", 404)
     else:
         app.logger.error(r.content)
         return ("Got error from addok service", 500)
