@@ -46,7 +46,7 @@ def read_operators(f: io.TextIOWrapper) -> list[Operator]:
     current_field_iterator = iter(TABLE_FIELDS)
     for line in f.readlines():
         line = line.strip()
-        if line.strip() == "|-":
+        if line == "|-":
             if current_record.is_initialized:
                 result.append(current_record)
             current_record = Operator()

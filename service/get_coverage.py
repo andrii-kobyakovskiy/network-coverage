@@ -34,7 +34,9 @@ def read_coverage(f: io.TextIOWrapper) -> Iterable[Coverage]:
     )
     for record in reader:
         yield Coverage(**{
-            f.name: f.type(int(v)) 
+            # values provided by the DictReader are raw strings
+            # at the same time all values in provided CSV file are stored as integers
+            f.name: f.type(int(v))  # cast a value to annotated type
             for f, v in record.items()
         })
 
