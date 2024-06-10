@@ -9,18 +9,8 @@ from get_operators import read_operators, Operator
 
 
 @dataclasses.dataclass
-class Location:
-    type: str
-    coordinates: list[int]
-
-    @classmethod
-    def Point(cls, x: int, y: int):
-        return cls(type="Point", coordinates=[x, y])
-
-
-@dataclasses.dataclass
 class CoverageGeoRecord:
-    location: Location
+    location: list[int]
     operator: str
     has_2g: bool
     has_3g: bool
@@ -55,7 +45,7 @@ def merge_coverage_data(operators: list[Operator], coverage: Iterable[Coverage])
         x, y = coordinates_transformer.transform(c.x, c.y)
         yield CoverageGeoRecord(
             operator=operator_repr,
-            location=Location.Point(x, y),
+            location=[x, y],
             has_2g=c.has_2g,
             has_3g=c.has_3g,
             has_4g=c.has_4g,
